@@ -230,11 +230,6 @@ void Solver::restructure( int left, int right, int cur )
         triangulation[{ min( innerPt, left ), max( innerPt, left ) }].insert( cur );
         triangulation[{ min( innerPt, right ), max( innerPt, right ) }].erase( left );
         triangulation[{ min( innerPt, right ), max( innerPt, right ) }].insert( cur );
-        /*aux.WriteLine( points[left].x,
-                       points[left].y,
-                       points[right].x,
-                       points[right].y,
-                       "#4be" );*/
         triangulation.erase( { min( left, right ), max( left, right ) } );
 
         recursionStack[stackSize++] = { left, innerPt };
