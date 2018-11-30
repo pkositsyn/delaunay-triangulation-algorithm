@@ -2,7 +2,7 @@
 
 This is my iterative algorithm for Delaunay triangulation.
 
-The idea is to sort all the points by their x-coordinate and iteratively add in the triangulation. Firstly, we find all "visible" points in current triangulation from the new point. Then we make edges between them and new point. Finally, for each new triangle the Delaunay condition is checked and recursively applied to the triangles appeared in case of changes.
+The idea is to sort all the points by their x-coordinate and iteratively add in the triangulation. Firstly, we find all "visible" points in current triangulation from the new point. Then we make edges between them and the new point. Finally, for each new triangle the Delaunay condition is checked and recursively applied to the triangles appeared in case of changes.
 
 I assume this algorithm to work for O( N log N ).
 
@@ -28,7 +28,7 @@ Attaching some nice pictures of triangulations made by this program:
 ![screenshot from 2018-11-30 17-46-50](https://user-images.githubusercontent.com/37667546/49296028-41d64c80-f4c8-11e8-98f6-2e076ea267fb.png)
 
 The only bad thing I see in this algorithm that it produces a lot of narrow long triangles, which can be bad for precision.
-(these blue edges were added and then removed during algorithm)
+(these blue edges are added and then removed during algorithm)
 
 
 ![screenshot from 2018-11-30 23-46-58](https://user-images.githubusercontent.com/37667546/49314050-44519a00-f4fa-11e8-894d-0ad2e835de3a.png)
