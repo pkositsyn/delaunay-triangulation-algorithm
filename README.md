@@ -10,6 +10,7 @@ Finding the "visible" points is O( N ) due to the fact that the last added point
 There is a tough situation with total number of recursive calls for checking but I saw in some works that it is also O( N ), though I can't confirm this fact.
 
 Here are approximate tests time result in seconds:
+
 ![screenshot from 2018-11-30 19-02-01](https://user-images.githubusercontent.com/37667546/49300149-89fa6c80-f4d2-11e8-897d-950c35f907b7.png)
 
 Attaching some nice pictures of triangulations made by this program:
@@ -17,13 +18,20 @@ Attaching some nice pictures of triangulations made by this program:
 
 ### Uniform variation, 1000 points
 ![screenshot from 2018-11-30 18-15-20](https://user-images.githubusercontent.com/37667546/49297477-ec9c3a00-f4cb-11e8-86c2-589c0dbee38d.png)
+
+
 ### Normal variation, 1000 points
 ![screenshot from 2018-11-30 17-46-50](https://user-images.githubusercontent.com/37667546/49296028-41d64c80-f4c8-11e8-98f6-2e076ea267fb.png)
+
 The only bad thing I see in this algorithm that it produces a lot of narrow long triangles, which can be bad for precision.
-(The same points set as on the previous picture)
-![screenshot from 2018-11-30 18-02-10](https://user-images.githubusercontent.com/37667546/49297109-0426f300-f4cb-11e8-8c39-499d95afe935.png)
+
+
+![screenshot from 2018-11-30 23-46-58](https://user-images.githubusercontent.com/37667546/49314050-44519a00-f4fa-11e8-894d-0ad2e835de3a.png)
+
 ### Pretty pattern
 ![screenshot from 2018-11-30 17-43-27](https://user-images.githubusercontent.com/37667546/49296030-41d64c80-f4c8-11e8-86af-2143deac856f.png)
+
+
 ### A circle with a point in the center
 ![screenshot from 2018-11-30 17-39-33](https://user-images.githubusercontent.com/37667546/49305179-989b5080-f4df-11e8-8faf-2a366ea22ad4.png)
 
