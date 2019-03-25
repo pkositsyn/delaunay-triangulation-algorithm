@@ -146,7 +146,7 @@ void Solver::Solve()
     sort( points.begin(), points.end(), cmpPoints );
 
     if( points.size() < 3 ) {
-		// Если менее трех точек, то триангуляция пустая
+	    // Если менее трех точек, то триангуляция пустая
         return;
     }
 	
@@ -167,14 +167,14 @@ void Solver::Solve()
 
     for( int i = 3; i < points.size(); ++i ) {
         int currentPt = i - 1;    // Последняя добавленная точка
-		// Пока, двигаясь вправо от точки, ребра видимые, выполняем рекурсивное перестроение
+	    // Пока, двигаясь вправо от точки, ребра видимые, выполняем рекурсивное перестроение
         while( CrossProduct( points[currentPt] - points[i], points[points[currentPt].right] - points[i] ) > -eps ) {
             restructure( currentPt, points[currentPt].right, i );
             currentPt = points[currentPt].right;
         }
         points[i].right = currentPt;    // Добавляем правого соседа МВО текущей точки
 
-		// Аналогично для движения влево, пока ребра видимые
+	    // Аналогично для движения влево, пока ребра видимые
         currentPt = i - 1;
 
         while( CrossProduct( points[currentPt] - points[i], points[points[currentPt].left] - points[i] ) < eps ) {
@@ -213,17 +213,17 @@ void Solver::restructure( int left, int right, int cur )
         left = recursionStack[stackSize - 1].v1; right = recursionStack[stackSize - 1].v2;
         --stackSize;
 
-		// Берем минимум в множестве, потому что cur > индекс любой уже добавленной точки
+	    // Берем минимум в множестве, потому что cur > индекс любой уже добавленной точки
         int innerPt = triangulation[{ min( left, right ), max( left, right ) }].GetMin();
         if( check( left, right, cur, innerPt ) ) {
-			// Если менять ничего в четырехугольнике не надо, просто добавляем недостающие ребра и выходим
+		// Если менять ничего в четырехугольнике не надо, просто добавляем недостающие ребра и выходим
             triangulation[{ right, cur }].insert( left );
             triangulation[{ left, cur }].insert( right );
             triangulation[{ min( left, right ), max( left, right ) }].insert( cur );
             continue;
         }
 
-		// Иначе перестраиваем триангуляцию в четырехугольнике
+	    // Иначе перестраиваем триангуляцию в четырехугольнике
         triangulation[{ right, cur }].erase( left );
         triangulation[{ right, cur }].insert( innerPt );
         triangulation[{ left, cur }].erase( right );
@@ -234,7 +234,7 @@ void Solver::restructure( int left, int right, int cur )
         triangulation[{ min( innerPt, right ), max( innerPt, right ) }].insert( cur );
         triangulation.erase( { min( left, right ), max( left, right ) } );
 
-		// И добавляем 2 новых рекурсивных вызова
+	    // И добавляем 2 новых рекурсивных вызова
         recursionStack[stackSize++] = { left, innerPt };
         recursionStack[stackSize++] = { innerPt, right };
     }
