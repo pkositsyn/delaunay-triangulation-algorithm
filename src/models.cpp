@@ -15,5 +15,3 @@ Vector2D Vector2D::operator-() const {
 }
 
 }  // namespace geometry
-
-
