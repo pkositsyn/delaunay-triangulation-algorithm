@@ -77,7 +77,7 @@ void DelaunayBuilder::Build() {
 	// Инициализация первого треугольника
 	convex_hull_[0] = ListNode{1, 1};
 	convex_hull_[1] = ListNode{0, 0};
-	graph_[Edge{0, 1}].insert(2);
+	graph_[Edge{0, 1}].Insert(2);
 
 	for (int i = 2; i < points_.size(); ++i) {
 		AddPointToTriangulation(i);
@@ -102,23 +102,23 @@ void DelaunayBuilder::FixTriangulation(int left, int right, int outer) {
 
 		// Берем минимум в множестве, потому что outer > индекса любой добавленной точки
 		int inner = graph_[Edge{std::min(left, right),
-														std::max(left, right)}].GetMin();
+														std::max(left, right)}].Min();
 		if (CheckDelaunayCondition(left, right, outer, inner)) {
 			// Если менять ничего в четырехугольнике не надо,
 			// просто добавляем недостающие ребра и выходим
-			graph_[Edge{right, outer}].insert(left);
-			graph_[Edge{left, outer}].insert(right);
+			graph_[Edge{right, outer}].Insert(left);
+			graph_[Edge{left, outer}].Insert(right);
 			if (right < left) std::swap(right, left);
-			graph_[Edge{left, right}].insert(outer);
+			graph_[Edge{left, right}].Insert(outer);
 			continue;
 		}
 
 		// Иначе перестраиваем триангуляцию в четырехугольнике
-		graph_[Edge{right, outer}].replace(left, inner);
-		graph_[Edge{left, outer}].replace(right, inner);
-		graph_[Edge{std::min(inner, left), std::max(inner, left)}].replace(right,
+		graph_[Edge{right, outer}].Replace(left, inner);
+		graph_[Edge{left, outer}].Replace(right, inner);
+		graph_[Edge{std::min(inner, left), std::max(inner, left)}].Replace(right,
 																																			 outer);
-		graph_[Edge{std::min(inner, right), std::max(inner, right)}].replace(left,
+		graph_[Edge{std::min(inner, right), std::max(inner, right)}].Replace(left,
 																																				 outer);
 
 		graph_.erase(Edge{std::min(left, right), std::max(left, right)});
@@ -166,7 +166,7 @@ bool DelaunayBuilder::CheckDelaunayCondition(
 std::unordered_set<int> BuildConvexHull(const Triangulation& triangulation) {
 	std::unordered_set<int> convex_hull;
 	for (const auto& [edge, item] : triangulation) {
-		if (item.size() != 2) {
+		if (item.Size() != 2) {
 			convex_hull.insert(edge.v1);
 			convex_hull.insert(edge.v2);
 		}

@@ -18,11 +18,6 @@ struct Edge {
 	}
 };
 
-struct ListNode {
-	int left;
-	int right;
-};
-
 // Вектор в двумерном пространстве
 struct Vector2D {
 	Vector2D(double x, double y) : x(x), y(y) {}
@@ -43,39 +38,39 @@ struct TwoVertices {
 	explicit TwoVertices(int v1 = -1, int v2 = -1) : v1(v1), v2(v2) {}
 	int v1;
 	int v2;
-	inline void insert(int v) {
+	inline void Insert(int v) {
 		if (v1 == v || v2 == v) return;
-		assert(this->size() < 2);
+		assert(this->Size() < 2);
 		(v1 == -1 ? v1 : v2) = v;
 	}
-	inline void erase(int v) {
+	inline void Erase(int v) {
 		if (v1 == v) {
 			v1 = -1;
 		} else if (v2 == v) {
 			v2 = -1;
 		}
 	}
-	inline void replace(int u, int v) {
+	inline void Replace(int u, int v) {
 		if (v1 == u) {
 			v1 = v;
 		} else if (v2 == u) {
 			v2 = v;
 		} else {
-			insert(v);
+			Insert(v);
 		}
 	}
-	inline int GetMax() const {
+	inline int Max() const {
 		assert(v1 != -1 || v2 != -1);
 		return std::max(v1, v2);
 	}
-	inline int GetMin() const {
+	inline int Min() const {
 		if (v1 != -1 && v2 != -1) {
 			return std::min(v1, v2);
 		}
 		assert(v1 != -1 || v2 != -1);
 		return v1 != -1 ? v1 : v2;
 	}
-	inline int size() const { return (v1 != -1) + (v2 != -1); }
+	inline int Size() const { return (v1 != -1) + (v2 != -1); }
 };
 
 // Определение хэш-функции для ребра как комбинация хэшей вершин
@@ -87,6 +82,11 @@ struct EdgeHash {
 		lhs ^= rhs + 0x9e3779b9 + (lhs << 6) + (lhs >> 2);
 		return lhs;
 	}
+};
+
+struct ListNode {
+	int left;
+	int right;
 };
 
 using Triangulation = std::unordered_map<Edge, TwoVertices, EdgeHash>;
