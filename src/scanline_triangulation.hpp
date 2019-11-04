@@ -32,7 +32,6 @@ class DelaunayBuilder {
 	}
 
 	// Проверяет, нужно ли перестраивать четырехугольник, заданный индексами точек в аргументах
-	// protected для тестирования
 	bool CheckDelaunayCondition(int left, int right, int outer, int inner) const;
 
 	// Строит триангуляцию
@@ -43,15 +42,16 @@ class DelaunayBuilder {
 	// Функция, которая рекурсивно перестраивает триангуляцию (шаг 4)
 	void FixTriangulation(int left, int right, int outer);
 
-	// Моделируем рекурсию с помощью стека, чтобы не было stack overflow
+	// Моделируем рекурсию с помощью стека, чтобы не было переполнения
 	std::vector<Edge> recursion_stack_{};
 
-	// Структура для хранения триангуляции: ребро -> пара вершин, точки
+	// Структура для хранения триангуляции: ребро -> пара вершин + точки
 	DelaunayTriangulation triangulation_{};
 
 	List convex_hull_{};
 };
 
+// Возвращает выпуклую оболочку как номера индексов вершин points в ней
 std::unordered_set<int> BuildConvexHull(const Triangulation& triangulation);
 
 }  // namespace geometry

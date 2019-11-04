@@ -6,8 +6,9 @@
 
 auto GetPointsFromStdin() {
 	std::vector<geometry::Vector2D> points;
+
+	// Считывание пар точек до EOF
 	double x, y;
-// Считывание пар точек до EOF
 	while ((std::cin >> x) && (std::cin >> y)) {
 		points.emplace_back(x, y);
 	}

@@ -7,8 +7,9 @@
 
 auto GetPointsFromStream(std::ifstream& in) {
 	std::vector<geometry::Vector2D> points;
+
+  // Считывание пар точек до EOF
 	double x, y;
-// Считывание пар точек до EOF
 	while ((in >> x) && (in >> y)) {
 		points.emplace_back(x, y);
 	}

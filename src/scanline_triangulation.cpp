@@ -62,7 +62,7 @@ void DelaunayBuilder::Build() {
 	auto& graph_ = triangulation_.graph;
 	auto& points_ = triangulation_.points;
 
-	// Размер стека рекурсии и МВО никогда не превышает количества точек
+	// Размер стека рекурсии и МВО никогда не превышают количества точек
 	recursion_stack_.resize(points_.size());
 	convex_hull_.resize(points_.size());
 
@@ -83,13 +83,14 @@ void DelaunayBuilder::Build() {
 		AddPointToTriangulation(i);
 	}
 	// Тут в triangulation находится вся триангуляция в формате ребро -> две вершины
-	// теперь можно с ней делать что угодно
+	// теперь можно с ней делать все, что угодно
 }
 
-// cur всегда добавляемая точка, left и right - смежные с ней в треугольнике
-// Четвертую точку для четырехугольника innerPt узнаем из ребра {left, right}
+// outer всегда добавляемая точка, left и right - смежные с ней в треугольнике
+// Четвертую точку для четырехугольника inner узнаем из ребра {left, right}
 void DelaunayBuilder::FixTriangulation(int left, int right, int outer) {
 	auto& graph_ = triangulation_.graph;
+
 	// Инициализация стека рекурсии
 	// хранить достаточно left и right
 	recursion_stack_[0] = Edge{left, right};
@@ -99,7 +100,7 @@ void DelaunayBuilder::FixTriangulation(int left, int right, int outer) {
 		right = recursion_stack_[stack_size - 1].v2;
 		--stack_size;
 
-		// Берем минимум в множестве, потому что cur > индекс любой уже добавленной точки
+		// Берем минимум в множестве, потому что outer > индекса любой добавленной точки
 		int inner = graph_[Edge{std::min(left, right),
 														std::max(left, right)}].GetMin();
 		if (CheckDelaunayCondition(left, right, outer, inner)) {
@@ -134,14 +135,18 @@ bool DelaunayBuilder::CheckDelaunayCondition(
 	const auto& r = triangulation_.points[right];
 	const auto& t /*top*/ = triangulation_.points[outer];
 	const auto& b /*bottom*/ = triangulation_.points[inner];
-	// Проверка на то, что это вообще четырехугольник и выпуклость
+
+	// Проверка на то, что подан не треугольник
 	if (outer == inner) {
 		return true;
 	}
+
+	// Проверка на выпуклость
 	if (CrossProduct(l - t, b - t) < 0 || CrossProduct(r - t, b - t) > 0) {
 		return true;
 	}
-	// Проверка условия Делоне, как в книжке из статьи
+
+	// Проверка условия Делоне, как в книге из статьи
 	const auto Sa = (t.x - r.x) * (t.x - l.x) + (t.y - r.y) * (t.y - l.y);
 	const auto Sb = (b.x - r.x) * (b.x - l.x) + (b.y - r.y) * (b.y - l.y);
 	if (Sa > -eps && Sb > -eps) {

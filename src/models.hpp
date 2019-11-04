@@ -8,10 +8,10 @@
 
 namespace geometry {
 
-// Тип ребро, фактически работает как std::pair<int, int>
+// Тип ребро, фактически работает как std::pair<int, int> (компаратор не нужен)
 struct Edge {
 	explicit Edge(int _v1 = -1, int _v2 = -1) : v1(_v1), v2(_v2) {}
-	int v1;    // Вершины, которые соединяют ребро
+	int v1;    // Вершины, соединяющие ребро
 	int v2;
 	bool operator==(const Edge& other) const {
 		return v1 == other.v1 && v2 == other.v2;
@@ -38,7 +38,7 @@ inline double CrossProduct(const Vector2D& lhs, const Vector2D& rhs) {
 	return lhs.x * rhs.y - lhs.y * rhs.x;
 }
 
-// Множество из 2 вершин, нужна для удобства
+// Множество из 2 вершин, структура для удобства
 struct TwoVertices {
 	explicit TwoVertices(int v1 = -1, int v2 = -1) : v1(v1), v2(v2) {}
 	int v1;
@@ -78,7 +78,7 @@ struct TwoVertices {
 	inline int size() const { return (v1 != -1) + (v2 != -1); }
 };
 
-// Определение хэш-функции для ребра, как комбинация хэшей вершин
+// Определение хэш-функции для ребра как комбинация хэшей вершин
 struct EdgeHash {
 	std::hash<int> int_hash;
 	std::size_t operator()(const Edge& edge) const {
