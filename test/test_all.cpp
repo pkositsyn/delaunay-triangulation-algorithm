@@ -21,11 +21,11 @@ auto FileTestBody(std::ifstream&& in) {
 	auto builder = geometry::DelaunayBuilder::Create(std::move(points));
 	const auto& [triangulation, _] = builder->Get();
 	for (const auto& [edge, vertices] : triangulation) {
-		if (vertices.size() == 2) {
+		if (vertices.Size() == 2) {
 			builder->CheckDelaunayCondition(edge.v1,
 																			edge.v2,
-																			vertices.GetMin(),
-																			vertices.GetMax());
+																			vertices.Min(),
+																			vertices.Max());
 		}
 	}
 }
@@ -38,16 +38,16 @@ TEST(Triangulation, Simple) {
 	ASSERT_EQ(triangulation.size(), 3);
 
 	auto outer = triangulation.at(geometry::Edge{0, 1});
-	ASSERT_EQ(outer.GetMin(), 2);
-	ASSERT_EQ(outer.GetMax(), 2);
+	ASSERT_EQ(outer.Min(), 2);
+	ASSERT_EQ(outer.Max(), 2);
 
 	outer = triangulation.at(geometry::Edge{0, 2});
-	ASSERT_EQ(outer.GetMin(), 1);
-	ASSERT_EQ(outer.GetMax(), 1);
+	ASSERT_EQ(outer.Min(), 1);
+	ASSERT_EQ(outer.Max(), 1);
 
 	outer = triangulation.at(geometry::Edge{1, 2});
-	ASSERT_EQ(outer.GetMin(), 0);
-	ASSERT_EQ(outer.GetMax(), 0);
+	ASSERT_EQ(outer.Min(), 0);
+	ASSERT_EQ(outer.Max(), 0);
 }
 
 TEST(Triangulation, FileInput1) {
