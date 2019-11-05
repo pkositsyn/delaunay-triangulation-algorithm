@@ -68,8 +68,8 @@ void DelaunayBuilder::FixTriangulation(int left, int right, int outer) {
     --stack_size;
 
     // Берем минимум в множестве, потому что outer > индекса любой добавленной точки
-    int inner = graph_[Edge{std::min(left, right),
-                            std::max(left, right)}].Min();
+    int inner =
+        graph_[Edge{std::min(left, right), std::max(left, right)}].Min();
     if (CheckDelaunayCondition(left, right, outer, inner)) {
       // Если менять ничего в четырехугольнике не надо,
       // просто добавляем недостающие ребра и выходим
@@ -83,10 +83,8 @@ void DelaunayBuilder::FixTriangulation(int left, int right, int outer) {
     // Иначе перестраиваем триангуляцию в четырехугольнике
     graph_[Edge{right, outer}].Replace(left, inner);
     graph_[Edge{left, outer}].Replace(right, inner);
-    graph_[Edge{std::min(inner, left), std::max(inner, left)}].Replace(right,
-                                                                       outer);
-    graph_[Edge{std::min(inner, right), std::max(inner, right)}].Replace(left,
-                                                                         outer);
+    graph_[Edge{std::min(inner, left), std::max(inner, left)}].Replace(right, outer);
+    graph_[Edge{std::min(inner, right), std::max(inner, right)}].Replace(left, outer);
 
     graph_.erase(Edge{std::min(left, right), std::max(left, right)});
 
