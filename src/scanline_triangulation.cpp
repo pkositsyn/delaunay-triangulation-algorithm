@@ -19,6 +19,83 @@ std::unique_ptr<DelaunayBuilder> DelaunayBuilder::Create(
 	return std::make_unique<DelaunayBuilder>(std::move(builder));
 }
 
+bool DelaunayBuilder::CheckDelaunayCondition(
+		int left, int right, int outer, int inner) const {
+	const auto& l = triangulation_.points[left];
+	const auto& r = triangulation_.points[right];
+	const auto& t /*top*/ = triangulation_.points[outer];
+	const auto& b /*bottom*/ = triangulation_.points[inner];
+
+	// Проверка на то, что подан не треугольник
+	if (outer == inner) {
+		return true;
+	}
+
+	// Проверка на выпуклость
+	if (CrossProduct(l - t, b - t) < 0 || CrossProduct(r - t, b - t) > 0) {
+		return true;
+	}
+
+	// Проверка условия Делоне, как в книге из статьи
+	const auto Sa = (t.x - r.x) * (t.x - l.x) + (t.y - r.y) * (t.y - l.y);
+	const auto Sb = (b.x - r.x) * (b.x - l.x) + (b.y - r.y) * (b.y - l.y);
+	if (Sa > -eps && Sb > -eps) {
+		return true;
+	} else if (!(Sa < 0 && Sb < 0)) {
+		auto Sc = CrossProduct(t - r, t - l);
+		auto Sd = CrossProduct(b - r, b - l);
+		if (Sc < 0) Sc = -Sc;
+		if (Sd < 0) Sd = -Sd;
+		if (Sc * Sb + Sa * Sd > -eps) {
+			return true;
+		}
+	}
+	return false;
+}
+
+// outer всегда добавляемая точка, left и right - смежные с ней в треугольнике
+// Четвертую точку для четырехугольника inner узнаем из ребра {left, right}
+void DelaunayBuilder::FixTriangulation(int left, int right, int outer) {
+	auto& graph_ = triangulation_.graph;
+
+	// Инициализация стека рекурсии
+	// хранить достаточно left и right
+	recursion_stack_[0] = Edge{left, right};
+	int stack_size = 1;
+	while (stack_size > 0) {
+		left = recursion_stack_[stack_size - 1].v1;
+		right = recursion_stack_[stack_size - 1].v2;
+		--stack_size;
+
+		// Берем минимум в множестве, потому что outer > индекса любой добавленной точки
+		int inner = graph_[Edge{std::min(left, right),
+														std::max(left, right)}].Min();
+		if (CheckDelaunayCondition(left, right, outer, inner)) {
+			// Если менять ничего в четырехугольнике не надо,
+			// просто добавляем недостающие ребра и выходим
+			graph_[Edge{right, outer}].Insert(left);
+			graph_[Edge{left, outer}].Insert(right);
+			if (right < left) std::swap(right, left);
+			graph_[Edge{left, right}].Insert(outer);
+			continue;
+		}
+
+		// Иначе перестраиваем триангуляцию в четырехугольнике
+		graph_[Edge{right, outer}].Replace(left, inner);
+		graph_[Edge{left, outer}].Replace(right, inner);
+		graph_[Edge{std::min(inner, left), std::max(inner, left)}].Replace(right,
+																																			 outer);
+		graph_[Edge{std::min(inner, right), std::max(inner, right)}].Replace(left,
+																																				 outer);
+
+		graph_.erase(Edge{std::min(left, right), std::max(left, right)});
+
+		// И добавляем 2 новых рекурсивных вызова
+		recursion_stack_[stack_size++] = Edge{left, inner};
+		recursion_stack_[stack_size++] = Edge{inner, right};
+	}
+}
+
 void DelaunayBuilder::AddPointToTriangulation(int i) {
 	auto& points_ = triangulation_.points;
 
@@ -84,83 +161,6 @@ void DelaunayBuilder::Build() {
 	}
 	// Тут в triangulation находится вся триангуляция в формате ребро -> две вершины
 	// теперь можно с ней делать все, что угодно
-}
-
-// outer всегда добавляемая точка, left и right - смежные с ней в треугольнике
-// Четвертую точку для четырехугольника inner узнаем из ребра {left, right}
-void DelaunayBuilder::FixTriangulation(int left, int right, int outer) {
-	auto& graph_ = triangulation_.graph;
-
-	// Инициализация стека рекурсии
-	// хранить достаточно left и right
-	recursion_stack_[0] = Edge{left, right};
-	int stack_size = 1;
-	while (stack_size > 0) {
-		left = recursion_stack_[stack_size - 1].v1;
-		right = recursion_stack_[stack_size - 1].v2;
-		--stack_size;
-
-		// Берем минимум в множестве, потому что outer > индекса любой добавленной точки
-		int inner = graph_[Edge{std::min(left, right),
-														std::max(left, right)}].Min();
-		if (CheckDelaunayCondition(left, right, outer, inner)) {
-			// Если менять ничего в четырехугольнике не надо,
-			// просто добавляем недостающие ребра и выходим
-			graph_[Edge{right, outer}].Insert(left);
-			graph_[Edge{left, outer}].Insert(right);
-			if (right < left) std::swap(right, left);
-			graph_[Edge{left, right}].Insert(outer);
-			continue;
-		}
-
-		// Иначе перестраиваем триангуляцию в четырехугольнике
-		graph_[Edge{right, outer}].Replace(left, inner);
-		graph_[Edge{left, outer}].Replace(right, inner);
-		graph_[Edge{std::min(inner, left), std::max(inner, left)}].Replace(right,
-																																			 outer);
-		graph_[Edge{std::min(inner, right), std::max(inner, right)}].Replace(left,
-																																				 outer);
-
-		graph_.erase(Edge{std::min(left, right), std::max(left, right)});
-
-		// И добавляем 2 новых рекурсивных вызова
-		recursion_stack_[stack_size++] = Edge{left, inner};
-		recursion_stack_[stack_size++] = Edge{inner, right};
-	}
-}
-
-bool DelaunayBuilder::CheckDelaunayCondition(
-		int left, int right, int outer, int inner) const {
-	const auto& l = triangulation_.points[left];
-	const auto& r = triangulation_.points[right];
-	const auto& t /*top*/ = triangulation_.points[outer];
-	const auto& b /*bottom*/ = triangulation_.points[inner];
-
-	// Проверка на то, что подан не треугольник
-	if (outer == inner) {
-		return true;
-	}
-
-	// Проверка на выпуклость
-	if (CrossProduct(l - t, b - t) < 0 || CrossProduct(r - t, b - t) > 0) {
-		return true;
-	}
-
-	// Проверка условия Делоне, как в книге из статьи
-	const auto Sa = (t.x - r.x) * (t.x - l.x) + (t.y - r.y) * (t.y - l.y);
-	const auto Sb = (b.x - r.x) * (b.x - l.x) + (b.y - r.y) * (b.y - l.y);
-	if (Sa > -eps && Sb > -eps) {
-		return true;
-	} else if (!(Sa < 0 && Sb < 0)) {
-		auto Sc = CrossProduct(t - r, t - l);
-		auto Sd = CrossProduct(b - r, b - l);
-		if (Sc < 0) Sc = -Sc;
-		if (Sd < 0) Sd = -Sd;
-		if (Sc * Sb + Sa * Sd > -eps) {
-			return true;
-		}
-	}
-	return false;
 }
 
 std::unordered_set<int> BuildConvexHull(const Triangulation& triangulation) {

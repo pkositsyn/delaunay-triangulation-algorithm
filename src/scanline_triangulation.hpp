@@ -31,9 +31,6 @@ class DelaunayBuilder {
 		triangulation_.points = std::move(points);
 	}
 
-	// Проверяет, нужно ли перестраивать четырехугольник, заданный индексами точек в аргументах
-	bool CheckDelaunayCondition(int left, int right, int outer, int inner) const;
-
 	// Строит триангуляцию
 	void Build();
 
@@ -41,6 +38,9 @@ class DelaunayBuilder {
 
 	// Функция, которая рекурсивно перестраивает триангуляцию (шаг 4)
 	void FixTriangulation(int left, int right, int outer);
+
+	// Проверяет, нужно ли перестраивать четырехугольник, заданный индексами точек в аргументах
+	bool CheckDelaunayCondition(int left, int right, int outer, int inner) const;
 
 	// Моделируем рекурсию с помощью стека, чтобы не было переполнения
 	std::vector<Edge> recursion_stack_{};

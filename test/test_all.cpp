@@ -5,30 +5,7 @@
 
 #include <fstream>
 
-auto GetPointsFromStream(std::ifstream& in) {
-	std::vector<geometry::Vector2D> points;
-
-  // Считывание пар точек до EOF
-	double x, y;
-	while ((in >> x) && (in >> y)) {
-		points.emplace_back(x, y);
-	}
-	return points;
-}
-
-auto FileTestBody(std::ifstream&& in) {
-	auto points = GetPointsFromStream(in);
-	auto builder = geometry::DelaunayBuilder::Create(std::move(points));
-	const auto& [triangulation, _] = builder->Get();
-	for (const auto& [edge, vertices] : triangulation) {
-		if (vertices.Size() == 2) {
-			builder->CheckDelaunayCondition(edge.v1,
-																			edge.v2,
-																			vertices.Min(),
-																			vertices.Max());
-		}
-	}
-}
+void FileTestBody(std::ifstream&& in);
 
 TEST(Triangulation, Simple) {
 	std::vector<geometry::Vector2D> points = {{0, 0}, {1, 0}, {0, 1}};
@@ -78,6 +55,31 @@ TEST(Triangulation, FileInput5) {
 	std::ifstream in;
 	in.open("../test/tests/005");
 	FileTestBody(std::move(in));
+}
+
+auto GetPointsFromStream(std::ifstream& in) {
+	std::vector<geometry::Vector2D> points;
+
+	// Считывание пар точек до EOF
+	double x, y;
+	while ((in >> x) && (in >> y)) {
+		points.emplace_back(x, y);
+	}
+	return points;
+}
+
+void FileTestBody(std::ifstream&& in) {
+	auto points = GetPointsFromStream(in);
+	auto builder = geometry::DelaunayBuilder::Create(std::move(points));
+	const auto& [triangulation, _] = builder->Get();
+	for (const auto& [edge, vertices] : triangulation) {
+		if (vertices.Size() == 2) {
+			builder->CheckDelaunayCondition(edge.v1,
+																			edge.v2,
+																			vertices.Min(),
+																			vertices.Max());
+		}
+	}
 }
 
 int main(int argc, char *argv[]) {
