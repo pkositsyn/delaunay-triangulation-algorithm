@@ -26,7 +26,7 @@ bool DelaunayBuilder::CheckDelaunayCondition(
   const auto& t /*top*/ = triangulation_.points[outer];
   const auto& b /*bottom*/ = triangulation_.points[inner];
 
-  // Проверка на то, что подан не треугольник
+  // Проверка на то, что подан четырехугольник
   if (outer == inner) {
     return true;
   }
@@ -41,7 +41,8 @@ bool DelaunayBuilder::CheckDelaunayCondition(
   const auto Sb = (b.x - r.x) * (b.x - l.x) + (b.y - r.y) * (b.y - l.y);
   if (Sa > -eps && Sb > -eps) {
     return true;
-  } else if (!(Sa < 0 && Sb < 0)) {
+  } 
+  if (!(Sa < 0 && Sb < 0)) {
     auto Sc = CrossProduct(t - r, t - l);
     auto Sd = CrossProduct(b - r, b - l);
     if (Sc < 0) Sc = -Sc;
