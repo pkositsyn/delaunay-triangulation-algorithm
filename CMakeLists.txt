@@ -1,12 +1,13 @@
 cmake_minimum_required(VERSION 3.10)
 project(Delaunay)
 
-# Uncomment for gtest
-# find_package(GTest REQUIRED)
-# include_directories(${GTEST_INCLUDE_DIRS})
-
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_FLAGS "-O2")
+
+# Uncomment for gtest
+
+# find_package(GTest REQUIRED)
+# include_directories(${GTEST_INCLUDE_DIRS})
 
 # add_executable(Tests test/test_all.cpp
 #         src/scanline_triangulation.cpp src/models.cpp)
