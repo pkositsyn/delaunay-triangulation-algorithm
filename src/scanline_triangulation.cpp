@@ -142,7 +142,7 @@ void DelaunayBuilder::Build() {
   recursion_stack_.resize(points_.size());
   convex_hull_.resize(points_.size());
 
-  sort(points_.begin(), points_.end(), [](auto& lhs, auto& rhs) {
+  std::sort(points_.begin(), points_.end(), [](auto& lhs, auto& rhs) {
     return lhs.x < rhs.x;
   });
 
